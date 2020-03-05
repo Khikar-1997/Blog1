@@ -10,11 +10,12 @@ import java.util.ArrayList;
 public class ArticleService {
     public void create(Article article) {
         try (Connection conn = DriverManager.getConnection(MariaDbConstant.DB_URL, MariaDbConstant.USER, MariaDbConstant.PASS)) {
-            String query = "INSERT INTO article(name,date, description)VALUES(?,?,?)";
+            String query = "INSERT INTO article(name,date,description,user_id)VALUES(?,?,?,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setString(1, article.getName());
-            preparedStatement.setDate(2,article.getDate());
+            preparedStatement.setDate(2, article.getDate());
             preparedStatement.setString(3, article.getDescription());
+            preparedStatement.setInt(4, article.getUserId());
             preparedStatement.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -32,6 +33,7 @@ public class ArticleService {
                 article.setName(resultSet.getString("name"));
                 article.setDate(resultSet.getDate("date"));
                 article.setDescription(resultSet.getString("description"));
+                article.setUserId(resultSet.getInt("user_id"));
                 articles.add(article);
             }
         } catch (SQLException ex) {
@@ -50,7 +52,8 @@ public class ArticleService {
             while (resultSet.next()) {
                 article.setName(resultSet.getString("name"));
                 article.setDate(resultSet.getDate("date"));
-                article.setDexcription(resultSet.getString("description"));
+                article.setDescription(resultSet.getString("description"));
+                article.setUserId(resultSet.getInt("user_id"));
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -60,25 +63,47 @@ public class ArticleService {
 
     public void update(int id, Article article) {
         try (Connection conn = DriverManager.getConnection(MariaDbConstant.DB_URL, MariaDbConstant.USER, MariaDbConstant.PASS)) {
-            String query = "UPDATE article SET name = ?,date = DATE_ADD(now()),description = ? WHERE id = ?";
+            String query = "UPDATE article SET name = ?,date = DATE_ADD(now()),description = ?,user_id = ? WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(query);
             preparedStatement.setString(1, article.getName());
-            preparedStatement.setString(2, article.getDexcription());
-            preparedStatement.setInt(3,id);
+            preparedStatement.setString(2, article.getDescription());
+            preparedStatement.setInt(3, article.getUserId());
+            preparedStatement.setInt(4, id);
             preparedStatement.execute();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
 
-    public void delete(int id){
-        try(Connection conn = DriverManager.getConnection(MariaDbConstant.DB_URL,MariaDbConstant.USER,MariaDbConstant.PASS)){
+    public void delete(int id) {
+        try (Connection conn = DriverManager.getConnection(MariaDbConstant.DB_URL, MariaDbConstant.USER, MariaDbConstant.PASS)) {
             String query = "DELETE FROM article WHERE id = ?";
             PreparedStatement preparedStatement = conn.prepareStatement(query);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setInt(1, id);
             preparedStatement.execute();
-        }catch (SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+
+    public ArrayList<Article> selectArticlsByUserId(int userId) {
+        ArrayList<Article> articles = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(MariaDbConstant.DB_URL, MariaDbConstant.USER, MariaDbConstant.PASS)) {
+            String query = "SELECT * FROM article WHERE user_id = ?";
+            PreparedStatement preparedStatement = conn.prepareStatement(query);
+            preparedStatement.setInt(1,userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                Article article = new Article();
+                article.setName(resultSet.getString("name"));
+                article.setDate(resultSet.getDate("date"));
+                article.setDescription(resultSet.getString("description"));
+                article.setUserId(resultSet.getInt("user_id"));
+                articles.add(article);
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return articles;
     }
 }

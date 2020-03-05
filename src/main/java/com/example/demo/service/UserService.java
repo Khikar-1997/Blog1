@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 @Service
 public class UserService {
+
     public void create(User user) {
         try (Connection conn = DriverManager.getConnection(MariaDbConstant.DB_URL, MariaDbConstant.USER, MariaDbConstant.PASS)) {
             String query = "INSERT INTO user(name,surname,username,password)VALUES(?,?,?,?)";

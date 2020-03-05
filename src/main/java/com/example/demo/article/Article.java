@@ -6,13 +6,15 @@ import java.util.Objects;
 
 public class Article {
     private String name;
-    private Date date = Date.valueOf(LocalDate.now());
+    private Date date;
     private String description;
+    private int userId;
 
-    public Article(String name, Date date, String description) {
+    public Article(String name, Date date, String description, int userId) {
         this.name = name;
         this.date = date;
         this.description = description;
+        this.userId = userId;
     }
 
     public Article() {
@@ -31,15 +33,23 @@ public class Article {
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.date = Date.valueOf(LocalDate.now());
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDexcription(String description) {
+    public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -47,14 +57,15 @@ public class Article {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Article article = (Article) o;
-        return Objects.equals(name, article.name) &&
+        return userId == article.userId &&
+                Objects.equals(name, article.name) &&
                 Objects.equals(date, article.date) &&
                 Objects.equals(description, article.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, date, description);
+        return Objects.hash(name, date, description, userId);
     }
 
     @Override
@@ -63,6 +74,7 @@ public class Article {
                 "name='" + name + '\'' +
                 ", date=" + date +
                 ", description='" + description + '\'' +
+                ", userId=" + userId +
                 '}';
     }
 }

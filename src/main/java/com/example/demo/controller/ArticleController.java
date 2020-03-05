@@ -32,6 +32,12 @@ public class ArticleController {
         return ResponseEntity.ok(article);
     }
 
+    @GetMapping(value = "/user/article/{userId}")
+    public ResponseEntity<ArrayList<Article>> selectArticlsByUserId(@PathVariable int userId){
+        ArrayList<Article> articles = articleService.selectArticlsByUserId(userId);
+        return ResponseEntity.ok(articles);
+    }
+
     @PutMapping(value = "/article/{id}")
     public void update(@PathVariable int id,@RequestBody Article article){
         articleService.update(id,article);
@@ -41,4 +47,6 @@ public class ArticleController {
     public void delete(@PathVariable int id){
         articleService.delete(id);
     }
+
+
 }
